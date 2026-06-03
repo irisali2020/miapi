@@ -1,8 +1,9 @@
 import express from 'express';
 import productsRouter from './src/routes/products.router.js';
+import usersRouter from './src/routes/users.router.js';
 
 const app = express();
-app.use(express.json());
+app.use(express.json()); 
 
 
 app.get('/', (req, res) => {
@@ -12,7 +13,15 @@ app.get('/', (req, res) => {
          `);       
 });
 
-app.use(productsRouter);
+app.use('/api/products', productsRouter);
+app.use(usersRouter);
+
+app.get("/up", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "Servidor activo",
+  });
+});
 
 
 const PORT = 3000;
