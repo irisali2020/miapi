@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from 'express';
 import cors from "cors";
 import productsRouter from './src/routes/products.router.js';
@@ -49,7 +52,7 @@ app.get("/up", (req, res) => {
 
 app.use(rutaNoEncontrada);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);
