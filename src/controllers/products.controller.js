@@ -4,17 +4,17 @@ const products = [
     { id: 3, name: "Laptop MacBook Air M3", price: 1200 },     
 ];
 
-import { fetchProducts } from "../models/Product.js";
+import { fetchProducts, getProductById as getProductByIdModel, createProduct as createProductModel } from "../models/Product.js";
 
 export const getProducts = async (req, res) => {
     const products = await fetchProducts();
     res.json(products);
 };
 
-export const getProductsById = (req, res) => {  
+export const getProductsById = async(req, res) => {  
      
-    const idBuscar = Number(req.params.id);
-    const productoEncontrado = products.find(p => p.id === idBuscar);
+    const { id } = req.params;
+    const productoEncontrado = await getProductByIdModel(id)
     if (productoEncontrado) {
         res.json(productoEncontrado);
             } else {
@@ -23,24 +23,22 @@ export const getProductsById = (req, res) => {
         
 };
 
-export const createProduct = (req, res) => {
-    const { name, price } = req.body;
+export const createProduct = async(req, res) => {
+    const { title, price, category } = req.body;
 
-    if (!name || !price) {
+    if (!title || !price || !category) {
         return res.status(400).json({
             message: "Faltan datos obligatorios",
         });
     }
 
-    const newProduct = {
-        id: products.length + 1,
-        name,
-        price,        
-    };
+    const newProduct = await createProductModel({
+        title,
+        price,
+        category, 
+    });
 
-    products.push(newProduct);
-
-    res.status(201).json(newProduct);
+     res.status(201).json(newProduct);
 
 };
 
