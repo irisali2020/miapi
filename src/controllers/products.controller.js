@@ -4,7 +4,7 @@ const products = [
     { id: 3, name: "Laptop MacBook Air M3", price: 1200 },     
 ];
 
-import { fetchProducts, getProductById as getProductByIdModel, createProduct as createProductModel } from "../models/Product.js";
+import { fetchProducts, getProductById as getProductByIdModel, createProduct as createProductModel, updateProduct as updateProductModel, deleteProduct as deleteProductModel } from "../models/Product.js";
 
 export const getProducts = async (req, res) => {
     const products = await fetchProducts();
@@ -42,21 +42,41 @@ export const createProduct = async(req, res) => {
 
 };
 
-export const deleteProduct = (req, res) => {
-        const id = Number(req.params.id);
-        const productIndex = products.findIndex((product) => product.id === id);
+export const updateProduct = async (req, res) => {
+    const {id} = req.params;
 
-        if (productIndex == -1) {
-            return res.status(404).json({
-                message: "Producto no encontrado",
-                
-            });
+    {
+    const { title, price, category } = req.body;
+
+    if (!title || !price || !category) {
+        return res.status(400).json({
+            message: "Faltan datos obligatorios",
+        });
+    }
+
+    const updatedProduct = await updateProductModel(id, {
+        title,
+        price,
+        category});
+
+    if(!updatedProduct) {
+        return res.status(404).json({message:"Producto no encontrado"})
+    }
+    res.json(updatedProduct);
+}};
+
+
+export const deleteProduct = async (req, res) => {
+        const { id } = req.params;
+        
+        const deletedProduct = await deleteProductModel(id)
+
+        if(!deleteProduct) {
+            return res.status(404).json({message: "Producto no encontrado"});
         }
-
-        const deleteProduct = products.splice(productIndex, 1);
 
         res.json({
              message: "Producto eliminado",
-            product: deleteProduct[0],
+            product: deletedProduct,
         });
-    };  
+};  

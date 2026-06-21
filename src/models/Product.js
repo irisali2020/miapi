@@ -1,6 +1,6 @@
 import db from '../config/firebase.js';
 
-import { collection, doc, getDoc, getDocs, addDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 const productsCollection = collection(db, 'products');
 
@@ -41,4 +41,39 @@ export const createProduct = async (product) => {
         id: productRef.id,
         ...product
     }
-}
+};
+ 
+export const updateProduct = async(id, product) => {
+    const productRef = doc(productsCollection, id)
+    const snapshot = await getDoc(productRef)
+
+    if (!snapshot.exists()) {
+        return null
+    }
+
+    await updateDoc(productRef, product)
+
+    return { 
+        id,
+        ...product,
+    };
+};
+
+export const deleteProduct = async (id) => {
+    const productRef = doc(productsCollection, id)
+    const snapshot = await getDoc(productRef)
+
+    if (!snapshot.exists()) {
+        return null
+    }
+
+    const deletedProduct = {
+        id: snapshot.id,
+        ...snapshot.data()
+    }
+
+    await deleteDoc(productRef)
+
+    return deletedProduct;
+} 
+
