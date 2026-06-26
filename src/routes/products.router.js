@@ -4,14 +4,15 @@ import { getProducts,
  createProduct,
  updateProduct,
  deleteProduct} from '../controllers/products.controller.js';
+import { auth } from "../middlewares/auth.middleware.js";
 
 const router = Router ()
 
 
 router.get("/", getProducts);
 router.get("/:id", getProductsById); 
-router.post("/", createProduct);
-router.put("/:id", updateProduct)
-router.delete("/:id", deleteProduct); 
+router.post("/", auth, createProduct);
+router.put("/:id", auth, updateProduct)
+router.delete("/:id", auth, deleteProduct); 
     
 export default router;
